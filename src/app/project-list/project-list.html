@@ -1,0 +1,54 @@
+<div class="container mx-auto space-y-6">
+  <h1 class="text-2xl font-bold mb-6">Gestionnaire de Projets</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    @for (project of projects; track project.name) {
+
+      <div class="bg-white shadow-md rounded-lg p-6 border border-gray-100">
+
+        <!-- HEADER PROJET CLIQUABLE -->
+        <div
+          class="cursor-pointer"
+          (click)="toggleProject(project)"
+        >
+          <h2 class="text-xl font-semibold text-blue-600 flex items-center gap-2">
+
+            <!-- flèche rotation -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 transition-transform duration-200"
+              [class.rotate-180]="project.showTasks"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 18l6-6-6-6" />
+            </svg>
+
+            {{ project.name }}
+          </h2>
+
+          <p class="text-gray-600 text-sm">{{ project.description }}</p>
+
+          <span class="text-xs font-bold uppercase px-2 py-1 bg-gray-200 rounded">
+            {{ project.status }}
+          </span>
+        </div>
+
+        <hr class="border-gray-100 my-3" />
+
+        <!-- TACHES -->
+        @if (project.showTasks) {
+          <div class="mt-4">
+            <app-task-list [tasks]="project.tasks"></app-task-list>
+          </div>
+        }
+
+      </div>
+
+    }
+
+  </div>
+</div>

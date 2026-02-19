@@ -1,0 +1,20 @@
+<div class="mt-4 space-y-2">
+  <h4 class="font-bold text-sm text-gray-700">Tâches :</h4>
+
+  @for (task of tasks; track task.title) {
+    <div [class]="'p-2 border-l-4 bg-gray-50 ' + getStatusColor(task.status)">
+      <div class="flex justify-between items-center">
+        <span class="font-medium">{{ task.title }}</span>
+        <span class="text-xs px-2 py-1 rounded bg-white shadow-sm">
+          {{ task.status }}
+        </span>
+      </div>
+
+      <p class="text-xs text-gray-500 italic">
+        Priorité: {{ task.priority }}
+      </p>
+    </div>
+  } @empty {
+    <p class="text-gray-400 text-sm">Aucune tâche pour ce projet.</p>
+  }
+</div>
