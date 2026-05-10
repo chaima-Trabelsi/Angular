@@ -1,0 +1,93 @@
+<!-- project-detail.html -->
+<div class="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+
+  <!-- Bouton retour et Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <button (click)="goBack()"
+            class="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors font-medium">
+      <span>←</span> Retour aux projets
+    </button>
+    
+    <div class="flex items-center gap-3">
+       <button [routerLink]="[]" fragment="comments"
+               class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl text-sm font-bold hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center gap-2">
+         💬 Commentaires
+       </button>
+       @if (project()) {
+         <app-status-badge [status]="project()!.status"></app-status-badge>
+       }
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  @if (loading()) {
+    <div class="flex flex-col items-center justify-center py-20">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      <p class="mt-4 text-gray-500 font-medium">Récupération des données du projet...</p>
+    </div>
+  }
+
+  <!-- Message d'erreur -->
+  @if (error()) {
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-8 text-center">
+      <div class="text-4xl mb-4">⚠️</div>
+      <h3 class="text-xl font-bold text-red-800 dark:text-red-400">{{ error() }}</h3>
+      <button (click)="goBack()" class="mt-6 px-6 py-2.5 bg-red-600 text-white rounded-xl shadow-lg hover:bg-red-700 transition">
+        Retourner aux projets
+      </button>
+    </div>
+  }
+
+  <!-- Affichage du projet -->
+  @if (!loading() && !error() && project()) {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Menu Latéral -->
+      <aside class="lg:col-span-3 space-y-2">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 sticky top-24">
+          <div class="mb-6 px-4 py-2">
+            <h2 class="text-xs font-black uppercase tracking-widest text-gray-400">Navigation</h2>
+          </div>
+          
+          <nav class="space-y-1">
+            <a routerLink="overview" routerLinkActive="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-bold">
+              <span class="text-lg">📊</span> Overview
+            </a>
+            <a routerLink="board" routerLinkActive="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-bold">
+              <span class="text-lg">🎯</span> Board
+            </a>
+            <a routerLink="tasks" routerLinkActive="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-bold">
+              <span class="text-lg">📋</span> Tasks
+            </a>
+            <a routerLink="activity" routerLinkActive="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+               class="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-bold">
+              <span class="text-lg">⚡</span> Activity
+            </a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Contenu Principal -->
+      <main class="lg:col-span-9 space-y-8">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="flex items-center justify-between mb-8">
+             <h1 class="text-3xl font-black text-gray-900 dark:text-white">{{ project()!.name }}</h1>
+             <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Progress</span>
+                <span class="text-lg font-black text-blue-600">{{ getProgress() }}%</span>
+             </div>
+          </div>
+
+          <!-- Outlet pour les pages enfants -->
+          <router-outlet></router-outlet>
+        </div>
+
+        <!-- Section commentaires -->
+        <app-comment-form id="comments"></app-comment-form>
+      </main>
+    </div>
+  }
+</div>

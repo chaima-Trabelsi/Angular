@@ -1,0 +1,32 @@
+<div class="space-y-6 animate-in fade-in duration-500">
+  @if (loading()) {
+    <div class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
+    </div>
+  } @else if (project()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <h3 class="text-sm font-black uppercase tracking-widest text-gray-400 mb-4">Description du Projet</h3>
+        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">{{ project()!.description }}</p>
+      </div>
+      
+      <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <h3 class="text-sm font-black uppercase tracking-widest text-gray-400 mb-4">Statistiques Rapides</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500">Total des tâches</span>
+            <span class="font-bold text-gray-900 dark:text-white">{{ project()!.tasks.length }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500">Statut actuel</span>
+            <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg uppercase">{{ project()!.status }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500">Créé le</span>
+            <span class="text-gray-900 dark:text-white font-medium">{{ project()!.createdAt | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,143 @@
+<div class="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Gestion des adresses</h2>
+
+  <!-- Message d'avertissement si aucune adresse -->
+  @if (!hasAtLeastOneAddress()) {
+    <div class="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 rounded-lg">
+      <p class="text-red-700 dark:text-red-300 font-semibold">
+        ⚠️ Vous devez ajouter au moins une adresse !
+      </p>
+    </div>
+  }
+
+  <form [formGroup]="addressesForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+    <!-- SECTION ADRESSES (FORMARRAY) -->
+    <!-- 4. Lier le FormArray avec formArrayName -->
+    <div formArrayName="addresses">
+
+      <!-- 4. Parcourir les adresses avec @for -->
+      @for (address of addresses.controls; track $index) {
+        <div [formGroupName]="$index" class="border rounded-lg p-4 mb-4 bg-gray-50 dark:bg-gray-700 relative">
+
+          <!-- Titre avec numéro de l'adresse -->
+          <h3 class="text-md font-semibold mb-3 text-gray-700 dark:text-gray-300">
+            Adresse n°{{ $index + 1 }}
+          </h3>
+
+          <!-- Champ TYPE (select) -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Type d'adresse <span class="text-red-500">*</span>
+            </label>
+            <select formControlName="type"
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                           bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
+              <option value="domicile">🏠 Domicile</option>
+              <option value="travail">💼 Travail</option>
+              <option value="autre">📍 Autre</option>
+            </select>
+          </div>
+
+          <!-- Champ RUE -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Rue <span class="text-red-500">*</span>
+            </label>
+            <input type="text" formControlName="rue"
+                   placeholder="Ex: 1 rue de la Paix"
+                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                          bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                   [class.border-red-500]="address.get('rue')?.invalid && address.get('rue')?.touched">
+            @if (address.get('rue')?.invalid && address.get('rue')?.touched) {
+              <div class="mt-1 text-sm text-red-600">
+                @if (address.get('rue')?.errors?.['required']) { <p>❌ La rue est requise.</p> }
+                @if (address.get('rue')?.errors?.['minlength']) { <p>❌ Minimum 5 caractères.</p> }
+              </div>
+            }
+          </div>
+
+          <!-- Champ CODE POSTAL -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Code postal <span class="text-red-500">*</span>
+            </label>
+            <input type="text" formControlName="codePostal" placeholder="75001"
+                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                          bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                   [class.border-red-500]="address.get('codePostal')?.invalid && address.get('codePostal')?.touched">
+            @if (address.get('codePostal')?.invalid && address.get('codePostal')?.touched) {
+              <div class="mt-1 text-sm text-red-600">
+                @if (address.get('codePostal')?.errors?.['required']) { <p>❌ Le code postal est requis.</p> }
+                @if (address.get('codePostal')?.errors?.['pattern']) { <p>❌ Code postal invalide (5 chiffres).</p> }
+              </div>
+            }
+          </div>
+
+          <!-- Champ VILLE -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Ville <span class="text-red-500">*</span>
+            </label>
+            <input type="text" formControlName="ville" placeholder="Paris"
+                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                          bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
+                   [class.border-red-500]="address.get('ville')?.invalid && address.get('ville')?.touched">
+            @if (address.get('ville')?.invalid && address.get('ville')?.touched) {
+              <div class="mt-1 text-sm text-red-600">
+                @if (address.get('ville')?.errors?.['required']) { <p>❌ La ville est requise.</p> }
+                @if (address.get('ville')?.errors?.['minlength']) { <p>❌ Minimum 2 caractères.</p> }
+              </div>
+            }
+          </div>
+
+          <!-- Bouton SUPPRIMER -->
+          <button type="button" (click)="removeAddress($index)"
+                  class="mt-2 px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition-colors">
+            🗑️ Supprimer cette adresse
+          </button>
+        </div>
+      }
+
+      <!-- Bouton AJOUTER une adresse -->
+      <button type="button" (click)="addAddress()"
+              class="w-full mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
+        + Ajouter une adresse
+      </button>
+    </div>
+
+    <!-- Affichage du nombre d'adresses -->
+    <div class="text-sm text-gray-500 dark:text-gray-400 text-center">
+      Nombre d'adresses : {{ addresses.length }}
+    </div>
+
+    <!-- BOUTONS PRINCIPAUX -->
+    <div class="flex gap-3 pt-4">
+      <button type="button" (click)="markFormGroupTouched()"
+              class="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-colors">
+        🔍 Vérifier
+      </button>
+
+      <button type="submit" [disabled]="addressesForm.invalid || !hasAtLeastOneAddress()"
+              class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400
+                     disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors">
+        Enregistrer
+      </button>
+
+      <button type="button" (click)="resetForm()"
+              class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+        Réinitialiser
+      </button>
+    </div>
+  </form>
+
+  <!-- AFFICHAGE JSON -->
+  <div class="mt-6 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+    <p class="text-xs font-mono text-gray-600 dark:text-gray-300 break-all">
+      {{ addressesForm.value | json }}
+    </p>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+      Formulaire valide : {{ addressesForm.valid }}
+    </p>
+  </div>
+</div>

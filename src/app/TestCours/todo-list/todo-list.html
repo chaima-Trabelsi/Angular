@@ -1,0 +1,19 @@
+<h2>Liste des Todos</h2>
+
+<ul>
+  <li *ngFor="let todo of todolist">
+    <span>
+      <strong>{{ todo.title }}</strong>
+      -
+      <span [ngStyle]="{color: todo.completed ? 'green' : 'red'}">
+        {{ todo.completed ? 'Completed' : 'Not Completed' }}
+      </span>
+    </span>
+  </li>
+</ul>
+
+<button (click)="showBilan()">Bilan</button>
+
+<p *ngIf="message">
+  {{ message }}
+</p>

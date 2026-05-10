@@ -1,0 +1,161 @@
+<div class="max-w-2xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Formulaire utilisateur</h2>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+    <!-- Champ NOM -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Nom <span class="text-red-500">*</span>
+      </label>
+      <input type="text" formControlName="nom"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+             [class.border-red-500]="nom?.invalid && nom?.touched">
+      @if (nom?.invalid && nom?.touched) {
+        <div class="mt-1 text-sm text-red-600">
+          @if (nom?.errors?.['required']) { <p>❌ Le nom est requis.</p> }
+          @if (nom?.errors?.['minlength']) { <p>❌ Minimum 2 caractères.</p> }
+        </div>
+      }
+    </div>
+
+    <!-- Champ PRENOM -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Prénom <span class="text-red-500">*</span>
+      </label>
+      <input type="text" formControlName="prenom"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+             [class.border-red-500]="prenom?.invalid && prenom?.touched">
+      @if (prenom?.invalid && prenom?.touched) {
+        <div class="mt-1 text-sm text-red-600">
+          @if (prenom?.errors?.['required']) { <p>❌ Le prénom est requis.</p> }
+          @if (prenom?.errors?.['minlength']) { <p>❌ Minimum 2 caractères.</p> }
+        </div>
+      }
+    </div>
+
+    <!-- Champ EMAIL PRINCIPAL -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Email principal <span class="text-red-500">*</span>
+      </label>
+      <input type="email" formControlName="emailPrincipal"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+             [class.border-red-500]="emailPrincipal?.invalid && emailPrincipal?.touched">
+      @if (emailPrincipal?.invalid && emailPrincipal?.touched) {
+        <div class="mt-1 text-sm text-red-600">
+          @if (emailPrincipal?.errors?.['required']) { <p>❌ L'email principal est requis.</p> }
+          @if (emailPrincipal?.errors?.['email']) { <p>❌ Format invalide.</p> }
+        </div>
+      }
+    </div>
+
+    <!-- Champ ÂGE -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Âge <span class="text-red-500">*</span> <span class="text-xs text-gray-400">(18-100 ans)</span>
+      </label>
+      <input type="number" formControlName="age"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+             [class.border-red-500]="age?.invalid && age?.touched">
+      @if (age?.invalid && age?.touched) {
+        <div class="mt-1 text-sm text-red-600">
+          @if (age?.errors?.['required']) { <p>❌ L'âge est requis.</p> }
+          @if (age?.errors?.['min']) { <p>❌ Minimum 18 ans.</p> }
+          @if (age?.errors?.['max']) { <p>❌ Maximum 100 ans.</p> }
+        </div>
+      }
+    </div>
+
+    <!-- Champ VILLE -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Ville <span class="text-red-500">*</span>
+      </label>
+      <input type="text" formControlName="ville"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+             [class.border-red-500]="ville?.invalid && ville?.touched">
+      @if (ville?.invalid && ville?.touched) {
+        <div class="mt-1 text-sm text-red-600">
+          @if (ville?.errors?.['required']) { <p>❌ La ville est requise.</p> }
+          @if (ville?.errors?.['minlength']) { <p>❌ Minimum 2 caractères.</p> }
+        </div>
+      }
+    </div>
+
+    <!-- SECTION EMAILS SECONDAIRES (FORMARRAY) -->
+    <div class="border-t pt-4 mt-2">
+      <h3 class="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
+        Emails secondaires
+      </h3>
+
+      <!-- 6. Lier le FormArray avec formArrayName -->
+      <div formArrayName="emails">
+        <!-- 7. Parcourir les emails avec @for -->
+        @for (emailControl of emails.controls; track $index) {
+          <div [formGroupName]="$index" class="flex gap-2 mb-3 items-start">
+
+            <!-- Champ email -->
+            <div class="flex-1">
+              <input type="email" formControlName="email"
+                     placeholder="email@exemple.com"
+                     class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                     [class.border-red-500]="emailControl.get('email')?.invalid && emailControl.get('email')?.touched">
+            </div>
+
+            <!-- Sélecteur type -->
+            <div class="w-32">
+              <select formControlName="type"
+                      class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="perso">Personnel</option>
+                <option value="pro">Professionnel</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+
+            <!-- 8. Bouton supprimer désactivé si un seul email -->
+            <button type="button" (click)="removeEmail($index)"
+                    [disabled]="emails.length === 1"
+                    class="px-3 py-2 bg-red-500 hover:bg-red-600 disabled:bg-gray-400
+                           disabled:cursor-not-allowed text-white rounded-lg transition-colors">
+              🗑️
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Bouton AJOUTER -->
+      <button type="button" (click)="addEmail()"
+              class="mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
+        + Ajouter un email
+      </button>
+    </div>
+
+    <!-- Boutons principaux -->
+    <div class="flex gap-3 pt-4">
+      <button type="button" (click)="markFormGroupTouched()"
+              class="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-colors">
+        🔍 Vérifier
+      </button>
+
+      <button type="submit" [disabled]="userForm.invalid"
+              class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400
+                     disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors">
+        Envoyer
+      </button>
+
+      <button type="button" (click)="resetForm()"
+              class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+        Réinitialiser
+      </button>
+    </div>
+  </form>
+
+  <!-- Affichage JSON -->
+  <div class="mt-6 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+    <p class="text-xs font-mono text-gray-600 dark:text-gray-300 break-all">
+      {{ userForm.value | json }}
+    </p>
+  </div>
+</div>

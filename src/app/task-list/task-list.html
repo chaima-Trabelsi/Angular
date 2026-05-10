@@ -1,18 +1,72 @@
+<!-- task-list.html -->
 <div class="mt-4 space-y-2">
+  <div class="flex flex-wrap items-center gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+    <div class="flex items-center gap-2">
+      <label class="text-xs font-black uppercase tracking-wider text-gray-400">Priorité :</label>
+      <select [(ngModel)]="selectedPriority"
+              class="p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+        <option value="Toutes">Toutes</option>
+        <option value="Haute">Haute</option>
+        <option value="Moyenne">Moyenne</option>
+        <option value="Basse">Basse</option>
+      </select>
+    </div>
+
+    <div class="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
+
+    <div class="flex items-center gap-2">
+      <label class="text-xs font-black uppercase tracking-wider text-gray-400">Statut (URL) :</label>
+      <button (click)="updateFilter(null)" 
+              [class.bg-blue-600]="!currentStatusFilter"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+        Tous
+      </button>
+      <button (click)="updateFilter('Terminé')" 
+              [class.bg-green-600]="currentStatusFilter === 'Terminé'"
+              [class.text-white]="currentStatusFilter === 'Terminé'"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+        Terminées ✅
+      </button>
+    </div>
+
+    <div class="h-6 w-px bg-gray-200 dark:bg-gray-700"></div>
+
+    <div class="flex items-center gap-2">
+      <label class="text-xs font-black uppercase tracking-wider text-gray-400">Tri :</label>
+      <button (click)="updateSort(currentSort === 'priority' ? null : 'priority')" 
+              [class.bg-purple-600]="currentSort === 'priority'"
+              [class.text-white]="currentSort === 'priority'"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+        🔥 Par Priorité
+      </button>
+    </div>
+  </div>
   <h4 class="font-bold text-sm text-gray-700">Tâches :</h4>
 
-  @for (task of tasks; track task.title) {
-    <div [class]="'p-2 border-l-4 bg-gray-50 ' + getStatusColor(task.status)">
-      <div class="flex justify-between items-center">
-        <span class="font-medium">{{ task.title }}</span>
-        <span class="text-xs px-2 py-1 rounded bg-white shadow-sm">
-          {{ task.status }}
-        </span>
-      </div>
+  @for (task of filteredTasks; track task.title) {
+  <div class="p-2 border-l-4 bg-gray-50 dark:bg-gray-700">
+    <div class="flex justify-between items-center">
+      <a [routerLink]="['/projects', projectId, 'tasks', task.title]" 
+         class="font-medium hover:text-blue-600 transition-colors cursor-pointer">
+        {{ task.title }}
+      </a>
+      <span class="text-xs px-2 py-1 rounded bg-white dark:bg-gray-800">
+        {{ task.status }} {{ task.status | statusEmoji }}
+      </span>
+    </div>
 
-      <p class="text-xs text-gray-500 italic">
-        Priorité: {{ task.priority }}
-      </p>
+      <div class="flex justify-between items-center mt-1">
+        <p class="text-xs text-gray-500 italic">
+          Priorité: {{ task.priority }}
+        </p>
+        <!-- Bouton Changer statut -->
+        <button
+          (click)="onChangeStatus(task)"
+          class="text-xs bg-indigo-500 hover:bg-indigo-600 text-white px-2 py-1 rounded transition-colors"
+        >
+          Changer statut
+        </button>
+      </div>
     </div>
   } @empty {
     <p class="text-gray-400 text-sm">Aucune tâche pour ce projet.</p>

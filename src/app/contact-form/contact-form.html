@@ -1,0 +1,216 @@
+<!-- contact-form.html -->
+<div class="max-w-2xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Formulaire de contact</h2>
+
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+    <!-- ============================================ -->
+    <!-- Champ NOM -->
+    <!-- ============================================ -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Nom <span class="text-red-500">*</span>
+      </label>
+      <input type="text" formControlName="nom"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+             [class.border-red-500]="validationService.isInvalid(nom)">
+
+      <div class="text-red-600 text-sm mt-1">
+        <ng-template [appShowError]="nom" errorType="required">
+          ⚠️ Le nom est requis.
+        </ng-template>
+        <ng-template [appShowError]="nom" errorType="minlength">
+          ⚠️ Le nom doit contenir au moins 2 caractères.
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Champ PRENOM -->
+    <!-- ============================================ -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Prénom <span class="text-red-500">*</span>
+      </label>
+      <input type="text" formControlName="prenom"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+             [class.border-red-500]="validationService.isInvalid(prenom)">
+
+      <div class="text-red-600 text-sm mt-1">
+        <ng-template [appShowError]="prenom" errorType="required">
+          ⚠️ Le prénom est requis.
+        </ng-template>
+        <ng-template [appShowError]="prenom" errorType="minlength">
+          ⚠️ Le prénom doit contenir au moins 2 caractères.
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Champ EMAIL (avec validation asynchrone) -->
+    <!-- ============================================ -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Email <span class="text-red-500">*</span>
+      </label>
+
+      <!-- Indicateur de chargement pendant validation asynchrone -->
+      @if (email?.pending) {
+        <div class="mb-1">
+          <div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+          <span class="text-xs text-gray-500 ml-2">Vérification en cours...</span>
+        </div>
+      }
+
+      <input type="email" formControlName="email"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+             [class.border-red-500]="validationService.isInvalid(email)">
+
+      <div class="text-red-600 text-sm mt-1">
+        <ng-template [appShowError]="email" errorType="required">
+          ⚠️ L'email est requis.
+        </ng-template>
+        <ng-template [appShowError]="email" errorType="email">
+          ⚠️ Format d'email invalide (ex: nom@domaine.com).
+        </ng-template>
+        <ng-template [appShowError]="email" errorType="emailExists">
+          ⚠️ Cet email est déjà utilisé. Veuillez en choisir un autre.
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Champ TÉLÉPHONE (optionnel) -->
+    <!-- ============================================ -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Téléphone <span class="text-gray-400 text-xs">(optionnel)</span>
+      </label>
+      <input type="tel" formControlName="telephone" placeholder="0612345678"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+             [class.border-red-500]="validationService.isInvalid(telephone)">
+
+      <div class="text-red-600 text-sm mt-1">
+        <ng-template [appShowError]="telephone" errorType="pattern">
+          ⚠️ Format invalide. Utilisez 10 chiffres commençant par 01-09 (ex: 0612345678).
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Champ MESSAGE -->
+    <!-- ============================================ -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Message <span class="text-red-500">*</span>
+      </label>
+      <textarea formControlName="message" rows="4"
+                class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                [class.border-red-500]="validationService.isInvalid(message)"></textarea>
+
+      <div class="text-red-600 text-sm mt-1">
+        <ng-template [appShowError]="message" errorType="required">
+          ⚠️ Le message est requis.
+        </ng-template>
+        <ng-template [appShowError]="message" errorType="minlength">
+          ⚠️ Le message doit contenir au moins 10 caractères.
+        </ng-template>
+      </div>
+
+      <!-- Compteur de caractères -->
+      @if (message?.value?.length) {
+        <div class="text-xs text-gray-400 mt-1 text-right">
+          {{ message?.value?.length }}/10 caractères minimum
+        </div>
+      }
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Champ MOT DE PASSE -->
+    <!-- ============================================ -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Mot de passe <span class="text-red-500">*</span>
+      </label>
+      <input type="password" formControlName="password"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+             [class.border-red-500]="validationService.isInvalid(password)">
+
+      <div class="text-red-600 text-sm mt-1">
+        <ng-template [appShowError]="password" errorType="required">
+          ⚠️ Le mot de passe est requis.
+        </ng-template>
+        <ng-template [appShowError]="password" errorType="passwordStrength">
+          ⚠️ Mot de passe trop faible. Il doit contenir :
+          <ul class="list-disc list-inside ml-2 mt-1">
+            <li>Au moins une majuscule (A-Z)</li>
+            <li>Au moins une minuscule (a-z)</li>
+            <li>Au moins un chiffre (0-9)</li>
+            <li>Au moins un caractère spécial (!@#$%^&*)</li>
+            <li>Au moins 8 caractères</li>
+          </ul>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Champ CONFIRMATION MOT DE PASSE -->
+    <!-- ============================================ -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Confirmer le mot de passe <span class="text-red-500">*</span>
+      </label>
+      <input type="password" formControlName="confirmPassword"
+             class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+             [class.border-red-500]="validationService.isInvalid(confirmPassword)">
+
+      <div class="text-red-600 text-sm mt-1">
+        <ng-template [appShowError]="confirmPassword" errorType="required">
+          ⚠️ La confirmation du mot de passe est requise.
+        </ng-template>
+      </div>
+
+      <!-- Erreur de correspondance (validateur au niveau du FormGroup) -->
+      @if (contactForm.errors?.['mismatch'] && confirmPassword?.touched) {
+        <div class="text-red-600 text-sm mt-1">
+          ⚠️ Les mots de passe ne correspondent pas.
+        </div>
+      }
+    </div>
+
+    <!-- ============================================ -->
+    <!-- BOUTONS -->
+    <!-- ============================================ -->
+    <div class="flex gap-3 pt-4">
+      <button type="submit" [disabled]="contactForm.invalid"
+              class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400
+                     disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors">
+        Envoyer
+      </button>
+
+      <button type="button" (click)="contactForm.reset()"
+              class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+        Réinitialiser
+      </button>
+    </div>
+  </form>
+
+  <!-- ============================================ -->
+  <!-- AFFICHAGE JSON (pour déboguer) -->
+  <!-- ============================================ -->
+  <div class="mt-6 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+    <p class="text-xs font-mono text-gray-600 dark:text-gray-300 break-all">
+      {{ contactForm.value | json }}
+    </p>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+      Formulaire valide : {{ contactForm.valid }}
+    </p>
+  </div>
+</div>
